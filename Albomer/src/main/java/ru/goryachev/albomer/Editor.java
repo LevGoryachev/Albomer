@@ -1,30 +1,36 @@
 package ru.goryachev.albomer;
 
+
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Desktop;
+import java.awt.Point;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.dnd.DnDConstants;
 import java.awt.dnd.DropTarget;
 import java.awt.dnd.DropTargetDropEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.JTextPane;
 import javax.swing.SpringLayout;
-import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
 
-public class Editor extends JFrame implements HyperlinkListener {
+public class Editor extends JFrame {
 
 		private JTextField nameField;
 		private JTextField descField;
 		private JTextField numberField;
 		private JTextArea fileArea;
+		
+		Desktop desk = Desktop.getDesktop();
+		
 		
 		private String newName;
 		private String newExt;
@@ -48,49 +54,28 @@ public class Editor extends JFrame implements HyperlinkListener {
 			this.descField = new JTextField(50);
 			Pane.add(descField);
 
-			
-			
-		//HyperLink
-			
-			JTextPane hyperPane = new JTextPane();
-			hyperPane.setEditable(false);
-			hyperPane.setContentType("text/html");
-			hyperPane.setText("Ispytanie hyperssylky:<a href='mailto:michael@uml.com'>e-mail to</a> or do smth else");
-			hyperPane.addHyperlinkListener(new HyperlinkListener() {
-		        @Override
-		        public void hyperlinkUpdate(HyperlinkEvent e) {
-		            if(e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-		                System.out.println("HyperLink: " + e.getURL());
-		                // write your logic here to process mailTo link.
-		            }
-		        }
-		    });
-			
-			Pane.add(hyperPane);
-			
-			
-			
-			
 			Component fileLabel = new JLabel("Перетащите файлы сюда");
 			Pane.add(fileLabel);
 			this.fileArea = new JTextArea(20,60);
 			Pane.add(fileArea);
 			
-			
-			
+			JScrollPane jspArea = new JScrollPane(fileArea);
+			Pane.add(jspArea);
+						
+					
 			fileArea.setDropTarget(new DropTarget() {
 			    public synchronized void drop(DropTargetDropEvent evt) {
 			        try {
 			            evt.acceptDrop(DnDConstants.ACTION_COPY);
-			            List<File> droppedFiles = (List<File>)
-			                evt.getTransferable().getTransferData(DataFlavor.javaFileListFlavor);
+			            
+			            List<File> droppedFiles = (List<File>) evt.getTransferable().getTransferData(DataFlavor.javaFileListFlavor);
+			            
 			            for (File file : droppedFiles) {
-			                // process files
+
+			            	// process files
 			            	
-			            	fileArea.append(file.toString() + "\n" + "Ispytanie hyperssylky:<a href='mailto:michael@uml.com'>e-mail to</a> or it s OK");
-			            	
-			            	
-			            	//System.out.println("Dropped: " + file);	
+			            	fileArea.append(file.toString() + "\n");
+			            				            	
 			            }
 			        } catch (Exception ex) {
 			            ex.printStackTrace();
@@ -100,6 +85,53 @@ public class Editor extends JFrame implements HyperlinkListener {
 			
 			
 			
+			fileArea.addMouseListener(new MouseAdapter() {
+				
+                public void mouseClicked(MouseEvent me) {
+                	
+                	//double click
+                    if(me.getClickCount()==2) {
+                    
+                        int x = me.getX();
+                        int y = me.getY();
+
+                        int startOffset = fileArea.viewToModel(new Point(x, y));//where on jtextarea click was made
+                        String text = fileArea.getText();
+                        int searchAdress = 0;
+                        int wordEndIndex = 0;
+                        String[] words = text.split("\\s");//spliting the text to words. link will be a single word
+
+                        for(String word:words) {
+                        	
+                        	//find the resource link
+                            if(word.startsWith("https://") || word.startsWith("D:\\")) {
+                            	searchAdress = text.indexOf(word);
+                                wordEndIndex = searchAdress+word.length();
+                                
+                                if(startOffset>=searchAdress && startOffset<=wordEndIndex) {
+                                    try {
+                                    	
+                                    	fileArea.select(searchAdress, wordEndIndex);
+                                    	                                    	
+                                    	desk.getDesktop().open(new File(word));
+                                    	
+                                    	                                    	
+                                    	//Runtime r = Runtime.getRuntime();
+                                    	//r.exec(word);
+                                        //desk.browse(new URI(word)); //opening the link in browser. Desktop desk = Desktop.getDesktop();
+                                    }
+                                    catch(Exception e)
+                                    {
+                                        e.printStackTrace();
+                                    }
+
+                                }
+                            }
+                        }                           
+                    }
+
+                }
+            });
 			
 			
 			this.renamerButton = new JButton("Сохранить");
@@ -118,16 +150,12 @@ public class Editor extends JFrame implements HyperlinkListener {
 
 			layout.putConstraint(SpringLayout.WEST , fileLabel, 330, SpringLayout.WEST , Pane);
 			layout.putConstraint(SpringLayout.NORTH, fileLabel, 35, SpringLayout.NORTH, descLabel);
-			layout.putConstraint(SpringLayout.NORTH, fileArea, 35, SpringLayout.NORTH, fileLabel);
-			layout.putConstraint(SpringLayout.WEST , fileArea, 50, SpringLayout.WEST , Pane);
+			layout.putConstraint(SpringLayout.NORTH, jspArea, 35, SpringLayout.NORTH, fileLabel);
+			layout.putConstraint(SpringLayout.WEST , jspArea, 50, SpringLayout.WEST , Pane);
 			
 			layout.putConstraint(SpringLayout.WEST , renamerButton, 330, SpringLayout.WEST , Pane);
-			layout.putConstraint(SpringLayout.NORTH, renamerButton, 30, SpringLayout.SOUTH, fileArea);	
-			
-			layout.putConstraint(SpringLayout.WEST , hyperPane, 300, SpringLayout.WEST , Pane);
-			layout.putConstraint(SpringLayout.NORTH, hyperPane, 10, SpringLayout.SOUTH, renamerButton);	
-			
-			
+			layout.putConstraint(SpringLayout.NORTH, renamerButton, 30, SpringLayout.SOUTH, jspArea);	
+		
 			
 			
 			setLocation(250, 300);
@@ -139,15 +167,6 @@ public class Editor extends JFrame implements HyperlinkListener {
 			System.out.println("Editor");	
 		}
 
-	@Override
-	public void hyperlinkUpdate(HyperlinkEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-		
-
-	
-	
 	
 	
 }
