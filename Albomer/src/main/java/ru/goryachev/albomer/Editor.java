@@ -31,7 +31,9 @@ public class Editor extends JFrame implements HyperlinkListener {
 		private JTextField descField;
 		private JTextField numberField;
 		private JEditorPane editorField;
-		private String txtInField;
+		private String txtInField = "";
+		private String txtClick = "";
+				
 		private JButton renamerButton;
 		
 		Desktop desk = Desktop.getDesktop();
@@ -57,6 +59,8 @@ public class Editor extends JFrame implements HyperlinkListener {
 			Pane.add(fileLabel);
 			this.editorField = new JEditorPane();
 			editorField.setPreferredSize(new Dimension (750, 300));
+			editorField.setContentType("text/html");
+			
 			Pane.add(editorField);
 			
 			JScrollPane jspArea = new JScrollPane(editorField);
@@ -64,17 +68,17 @@ public class Editor extends JFrame implements HyperlinkListener {
 			
 		//Tips
 			JTextPane tips = new JTextPane();
-			tips.setEditable(true);
-			tips.setText("В поле можно вводить текст, но обязательно отделять пробелами от файлов");
-						
+			tips.setEditable(false);
+			tips.setContentType("text/html");
+			tips.setText("<b><font color=\"#556B2F\">В поле можно вводить текст, но обязательно отделять пробелами от файлов</font></b>");
+			Pane.add(tips);			
+			
 			//hyperPane.setContentType("text/html");
-						
+					
 			//hyperPane.setText("Ispytanie hyperssylky:<a href='mailto:michael@uml.com'>e-mail to</a> or do smth else");
 			
-			Pane.add(tips);
 		//
-						
-					
+										
 			editorField.setDropTarget(new DropTarget() {
 			    public synchronized void drop(DropTargetDropEvent evt) {
 			        try {
@@ -83,24 +87,21 @@ public class Editor extends JFrame implements HyperlinkListener {
 			            List<File> droppedFiles = (List<File>) evt.getTransferable().getTransferData(DataFlavor.javaFileListFlavor);
 			            
 			            for (File file : droppedFiles) {
-
-			            	// process files
+			            							            				
+			            	txtInField = txtInField + "<p>" + "<strong>" + "<a href=" + "file://localhost/" + file.toString() +">" + file.toString() + "</a>" + "</strong>" + "<font color='green'>" + " - " + "</font>" +  "</p>";
+			            				            				            	
+			            	editorField.setText(txtInField);
 			            	
-			            	//fileArea.append(file.toString() + "\n");
-			            	//editorField.setText(file.toString() + "\n");
+			            	txtClick = txtClick + file.toString() + " ";
 			            	
-			            	editorField.setText(txtInField + "\n" + file.toString());
-			            	
-			            	txtInField = editorField.getText();
-			            	
-			            				            	
+			            	System.out.println(txtInField);
 			            }
+			            
 			        } catch (Exception ex) {
 			            ex.printStackTrace();
 			        }
 			    }
 			});
-						
 		
 			editorField.addMouseListener(new MouseAdapter() {
 				
@@ -113,7 +114,10 @@ public class Editor extends JFrame implements HyperlinkListener {
                         int y = me.getY();
 
                         int startOffset = editorField.viewToModel(new Point(x, y));//where on jtextarea click was made
-                        String text = editorField.getText();
+                        
+                        //String text = editorField.getText();
+                        String text = txtClick;
+                        
                         int searchAdress = 0;
                         int wordEndIndex = 0;
                         String[] words = text.split("\\s");//spliting the text to words. link will be a single word
