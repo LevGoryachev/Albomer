@@ -1,9 +1,9 @@
 package ru.goryachev.albomer;
 
-
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Desktop;
+import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.dnd.DnDConstants;
@@ -15,29 +15,28 @@ import java.io.File;
 import java.util.List;
 
 import javax.swing.JButton;
+import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.JTextPane;
 import javax.swing.SpringLayout;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 
-public class Editor extends JFrame {
+public class Editor extends JFrame implements HyperlinkListener {
 
 		private JTextField nameField;
 		private JTextField descField;
 		private JTextField numberField;
-		private JTextArea fileArea;
+		private JEditorPane editorField;
+		private String txtInField;
+		private JButton renamerButton;
 		
 		Desktop desk = Desktop.getDesktop();
 		
-		
-		private String newName;
-		private String newExt;
-		private int fromNo;
-		private File path;
-		private JButton renamerButton;
-	
+			
 	public Editor() {
 	
 			Container Pane = this.getContentPane();
@@ -53,17 +52,30 @@ public class Editor extends JFrame {
 			Pane.add(descLabel);
 			this.descField = new JTextField(50);
 			Pane.add(descField);
-
+	
 			Component fileLabel = new JLabel("Перетащите файлы сюда");
 			Pane.add(fileLabel);
-			this.fileArea = new JTextArea(20,60);
-			Pane.add(fileArea);
+			this.editorField = new JEditorPane();
+			editorField.setPreferredSize(new Dimension (750, 300));
+			Pane.add(editorField);
 			
-			JScrollPane jspArea = new JScrollPane(fileArea);
+			JScrollPane jspArea = new JScrollPane(editorField);
 			Pane.add(jspArea);
+			
+		//Tips
+			JTextPane tips = new JTextPane();
+			tips.setEditable(true);
+			tips.setText("В поле можно вводить текст, но обязательно отделять пробелами от файлов");
+						
+			//hyperPane.setContentType("text/html");
+						
+			//hyperPane.setText("Ispytanie hyperssylky:<a href='mailto:michael@uml.com'>e-mail to</a> or do smth else");
+			
+			Pane.add(tips);
+		//
 						
 					
-			fileArea.setDropTarget(new DropTarget() {
+			editorField.setDropTarget(new DropTarget() {
 			    public synchronized void drop(DropTargetDropEvent evt) {
 			        try {
 			            evt.acceptDrop(DnDConstants.ACTION_COPY);
@@ -74,7 +86,13 @@ public class Editor extends JFrame {
 
 			            	// process files
 			            	
-			            	fileArea.append(file.toString() + "\n");
+			            	//fileArea.append(file.toString() + "\n");
+			            	//editorField.setText(file.toString() + "\n");
+			            	
+			            	editorField.setText(txtInField + "\n" + file.toString());
+			            	
+			            	txtInField = editorField.getText();
+			            	
 			            				            	
 			            }
 			        } catch (Exception ex) {
@@ -82,10 +100,9 @@ public class Editor extends JFrame {
 			        }
 			    }
 			});
-			
-			
-			
-			fileArea.addMouseListener(new MouseAdapter() {
+						
+		
+			editorField.addMouseListener(new MouseAdapter() {
 				
                 public void mouseClicked(MouseEvent me) {
                 	
@@ -95,8 +112,8 @@ public class Editor extends JFrame {
                         int x = me.getX();
                         int y = me.getY();
 
-                        int startOffset = fileArea.viewToModel(new Point(x, y));//where on jtextarea click was made
-                        String text = fileArea.getText();
+                        int startOffset = editorField.viewToModel(new Point(x, y));//where on jtextarea click was made
+                        String text = editorField.getText();
                         int searchAdress = 0;
                         int wordEndIndex = 0;
                         String[] words = text.split("\\s");//spliting the text to words. link will be a single word
@@ -104,21 +121,18 @@ public class Editor extends JFrame {
                         for(String word:words) {
                         	
                         	//find the resource link
-                            if(word.startsWith("https://") || word.startsWith("D:\\")) {
+                            if(word.startsWith("https://") || word.contains(":")) {
                             	searchAdress = text.indexOf(word);
                                 wordEndIndex = searchAdress+word.length();
                                 
                                 if(startOffset>=searchAdress && startOffset<=wordEndIndex) {
                                     try {
                                     	
-                                    	fileArea.select(searchAdress, wordEndIndex);
+                                    	editorField.select(searchAdress, wordEndIndex);
                                     	                                    	
                                     	desk.getDesktop().open(new File(word));
+                                	
                                     	
-                                    	                                    	
-                                    	//Runtime r = Runtime.getRuntime();
-                                    	//r.exec(word);
-                                        //desk.browse(new URI(word)); //opening the link in browser. Desktop desk = Desktop.getDesktop();
                                     }
                                     catch(Exception e)
                                     {
@@ -132,6 +146,7 @@ public class Editor extends JFrame {
 
                 }
             });
+      
 			
 			
 			this.renamerButton = new JButton("Сохранить");
@@ -152,11 +167,12 @@ public class Editor extends JFrame {
 			layout.putConstraint(SpringLayout.NORTH, fileLabel, 35, SpringLayout.NORTH, descLabel);
 			layout.putConstraint(SpringLayout.NORTH, jspArea, 35, SpringLayout.NORTH, fileLabel);
 			layout.putConstraint(SpringLayout.WEST , jspArea, 50, SpringLayout.WEST , Pane);
+						
+			layout.putConstraint(SpringLayout.WEST , tips, 200, SpringLayout.WEST , Pane);
+			layout.putConstraint(SpringLayout.NORTH, tips, 10, SpringLayout.SOUTH, jspArea);	
 			
-			layout.putConstraint(SpringLayout.WEST , renamerButton, 330, SpringLayout.WEST , Pane);
-			layout.putConstraint(SpringLayout.NORTH, renamerButton, 30, SpringLayout.SOUTH, jspArea);	
-		
-			
+			layout.putConstraint(SpringLayout.WEST , renamerButton, 375, SpringLayout.WEST , Pane);
+			layout.putConstraint(SpringLayout.NORTH, renamerButton, 25, SpringLayout.SOUTH, tips);	
 			
 			setLocation(250, 300);
 			setSize(850, 600);
@@ -167,6 +183,10 @@ public class Editor extends JFrame {
 			System.out.println("Editor");	
 		}
 
-	
+	@Override
+	public void hyperlinkUpdate(HyperlinkEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
 	
 }
