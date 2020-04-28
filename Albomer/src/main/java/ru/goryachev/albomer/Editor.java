@@ -33,6 +33,8 @@ public class Editor extends JFrame implements HyperlinkListener {
 		private String txtInField = "";
 						
 		private JButton saveButton;
+		
+		final char dm = 34;
 			
 	public Editor() {
 	
@@ -77,7 +79,7 @@ public class Editor extends JFrame implements HyperlinkListener {
 			            
 			            for (File file : droppedFiles) {
 			            							            				
-			            	txtInField = txtInField + "<p>" + "<strong>" + "<a href=" + "file:/" + file.toString() +">" + file.toString() + "</a>" + "</strong>" + "<font color='green'>" + " - " + "</font>" +  "</p>";
+			            	txtInField = txtInField + "<p>" + "<strong>" + "<a href=" + "file:/" + dm + file.toString().replaceAll("\u0020", "%20") + dm + ">" + file.toString() + "</a>" + "</strong>" + "<font color='green'>" + " - " + "</font>" +  "</p>";
 			            				            				            	
 			            	editorField.setText(txtInField);
 			            				            	
