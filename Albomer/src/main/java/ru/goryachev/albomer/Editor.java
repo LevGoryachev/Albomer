@@ -172,6 +172,9 @@ public class Editor extends JFrame implements HyperlinkListener {
 		 
 				if(e.getSource() == saveButton) {
 
+					name = nameField.getText();
+					desc = descField.getText();
+					
 					Saver saver = new Saver(name, desc, txtInField);
 					try {
 						saver.saveAlb();

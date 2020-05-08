@@ -3,6 +3,8 @@ package ru.goryachev.albomer;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.util.HashMap;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -13,7 +15,10 @@ public class Starter extends JFrame {
 
 	private JButton createButton;
 	private JButton openButton;
-	
+	private HashMap <Integer, String> reMap;
+	private String name;
+	private String desc;
+	private String txtInField;
 	
 	Starter () {
 	
@@ -54,13 +59,33 @@ public class Starter extends JFrame {
 			 
 		 
 			if(e.getSource() == createButton) {
+				
+				txtInField = "";
 
+				Editor editor = new Editor(name, desc, txtInField);
+				dispose();
 				
 				System.out.println("Create");
 			}
 			
 			if (e.getSource() == openButton) {
-			
+				
+				Reader reader = new Reader();
+				
+				try {
+					reMap = reader.readAlb();
+				} catch (ClassNotFoundException e1) {
+					e1.printStackTrace();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+				
+				name = (String) reMap.get(1).toString();
+				desc = (String) reMap.get(2).toString();
+				txtInField = (String) reMap.get(3).toString();
+								
+				Editor editor = new Editor(name, desc, txtInField);
+				dispose();
 
 				System.out.println("Open");
 			}
