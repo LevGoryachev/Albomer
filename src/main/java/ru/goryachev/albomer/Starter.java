@@ -27,12 +27,39 @@ public class Starter extends JFrame {
 
         this.createButton = new JButton("Создать альбом");
         Pane.add(createButton);
-        createButton.addActionListener(btnClick);
+        createButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                txtInField = "";
+                Editor editor = new Editor(name, desc, txtInField);
+                dispose();
+                System.out.println("Create button: disposed the empty Editor");
+            }
+        });
 
         this.openButton = new JButton("Открыть альбом");
         Pane.add(openButton);
-        openButton.addActionListener(btnClick);
+        openButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                Reader reader = new Reader();
+                try {
+                    reMap = reader.readAlb();
+                } catch (ClassNotFoundException e1) {
+                    e1.printStackTrace();
+                } catch (IOException e2) {
+                    e2.printStackTrace();
+                    System.out.println("Albomer's file (with extension .albomer) not found");
+                }
+                name = (String) reMap.get(1).toString();
+                desc = (String) reMap.get(2).toString();
+                txtInField = (String) reMap.get(3).toString();
 
+                Editor editor = new Editor(name, desc, txtInField);
+                dispose();
+                System.out.println("Open button: disposed the Editor filled from file");
+            }
+        });
 
         layout.putConstraint(SpringLayout.WEST , createButton, 200, SpringLayout.WEST , Pane);
         layout.putConstraint(SpringLayout.NORTH, createButton, 100, SpringLayout.NORTH, Pane);
@@ -40,58 +67,11 @@ public class Starter extends JFrame {
         layout.putConstraint(SpringLayout.WEST , openButton, 500, SpringLayout.WEST , Pane);
         layout.putConstraint(SpringLayout.NORTH, openButton, 100, SpringLayout.NORTH, Pane);
 
-
         setLocation(250, 400);
         setSize(850, 250);
         setTitle("ALBOMER by Lev Goryachev (version 1.0.1)");
         setVisible(true);
         setResizable(false);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
     }
-
-    ButtonListener btnClick = new ButtonListener();
-
-    public class ButtonListener implements ActionListener {
-
-        public void actionPerformed(ActionEvent e) {
-
-
-            if(e.getSource() == createButton) {
-
-                txtInField = "";
-
-                Editor editor = new Editor(name, desc, txtInField);
-                dispose();
-
-                System.out.println("Create");
-            }
-
-            if (e.getSource() == openButton) {
-
-                Reader reader = new Reader();
-
-                try {
-                    reMap = reader.readAlb();
-                } catch (ClassNotFoundException e1) {
-                    e1.printStackTrace();
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                }
-
-                name = (String) reMap.get(1).toString();
-                desc = (String) reMap.get(2).toString();
-                txtInField = (String) reMap.get(3).toString();
-
-                Editor editor = new Editor(name, desc, txtInField);
-                dispose();
-
-                System.out.println("Open");
-            }
-
-
-        }
-
-    }
-
 }

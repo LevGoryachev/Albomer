@@ -125,7 +125,21 @@ public class Editor extends JFrame implements HyperlinkListener {
 
         this.saveButton = new JButton("Сохранить");
         Pane.add(saveButton);
-        saveButton.addActionListener(btnClick);
+        saveButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                name = nameField.getText();
+                desc = descField.getText();
+
+                Saver saver = new Saver(name, desc, txtInField);
+                try {
+                    saver.saveAlb();
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+                System.out.println("Save button: info saved in Albomer file");
+            }
+        });
 
         layout.putConstraint(SpringLayout.WEST , nameLabel, 10, SpringLayout.WEST , Pane);
         layout.putConstraint(SpringLayout.NORTH, nameLabel, 25, SpringLayout.NORTH, Pane);
@@ -150,7 +164,7 @@ public class Editor extends JFrame implements HyperlinkListener {
 
         setLocation(250, 300);
         setSize(850, 600);
-        setTitle("ALBOMER by Lev Goryachev (version 1.0.1)");
+        setTitle("ALBOMER by Lev Goryachev (version 1.0)");
         setVisible(true);
         setResizable(false);
 
@@ -160,34 +174,5 @@ public class Editor extends JFrame implements HyperlinkListener {
     @Override
     public void hyperlinkUpdate(HyperlinkEvent e) {
         // TODO Auto-generated method stub
-
     }
-
-    ButtonListener btnClick = new ButtonListener();
-
-    public class ButtonListener implements ActionListener{
-
-        public void actionPerformed(ActionEvent e) {
-
-
-            if(e.getSource() == saveButton) {
-
-                name = nameField.getText();
-                desc = descField.getText();
-
-                Saver saver = new Saver(name, desc, txtInField);
-                try {
-                    saver.saveAlb();
-                } catch (IOException e1) {
-
-                    e1.printStackTrace();
-                }
-
-                System.out.println("SaveButton works");
-            }
-
-        }
-
-    }
-
 }
