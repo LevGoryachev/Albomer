@@ -1,8 +1,6 @@
 package ru.goryachev.albomer;
 
 import java.awt.Container;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.HashMap;
 
@@ -27,7 +25,9 @@ public class Starter extends JFrame {
 
         this.createButton = new JButton("Создать альбом");
         Pane.add(createButton);
-        createButton.addActionListener(new ActionListener() {
+
+        //Changing anonymous class to lambda expression sample
+        createButton.addActionListener(/*new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 txtInField = "";
@@ -35,31 +35,33 @@ public class Starter extends JFrame {
                 dispose();
                 System.out.println("Create button: disposed the empty Editor");
             }
+        }*/
+        (actionEvent) -> {
+            txtInField = "";
+            Editor editor = new Editor(name, desc, txtInField);
+            dispose();
+            System.out.println("Create button: disposed the empty Editor");
         });
 
         this.openButton = new JButton("Открыть альбом");
         Pane.add(openButton);
-        openButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                Reader reader = new Reader();
-                try {
-                    reMap = reader.readAlb();
-                } catch (ClassNotFoundException e1) {
-                    e1.printStackTrace();
-                } catch (IOException e2) {
-                    e2.printStackTrace();
-                    System.out.println("Albomer's file (with extension .albomer) not found");
-                }
-                name = (String) reMap.get(1).toString();
-                desc = (String) reMap.get(2).toString();
-                txtInField = (String) reMap.get(3).toString();
+        openButton.addActionListener((actionEvent) -> {Reader reader = new Reader();
+                    try {
+                        reMap = reader.readAlb();
+                    } catch (ClassNotFoundException e1) {
+                        e1.printStackTrace();
+                    } catch (IOException e2) {
+                        e2.printStackTrace();
+                        System.out.println("Albomer's file (with extension .albomer) not found");
+                    }
+                    name = (String) reMap.get(1).toString();
+                    desc = (String) reMap.get(2).toString();
+                    txtInField = (String) reMap.get(3).toString();
 
-                Editor editor = new Editor(name, desc, txtInField);
-                dispose();
-                System.out.println("Open button: disposed the Editor filled from file");
-            }
-        });
+                    Editor editor = new Editor(name, desc, txtInField);
+                    dispose();
+                    System.out.println("Open button: disposed the Editor filled from file");}
+        );
 
         layout.putConstraint(SpringLayout.WEST , createButton, 200, SpringLayout.WEST , Pane);
         layout.putConstraint(SpringLayout.NORTH, createButton, 100, SpringLayout.NORTH, Pane);

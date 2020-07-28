@@ -125,21 +125,17 @@ public class Editor extends JFrame implements HyperlinkListener {
 
         this.saveButton = new JButton("Сохранить");
         Pane.add(saveButton);
-        saveButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                name = nameField.getText();
-                desc = descField.getText();
+        saveButton.addActionListener((actionEvent) -> {name = nameField.getText();
+                    desc = descField.getText();
 
-                Saver saver = new Saver(name, desc, txtInField);
-                try {
-                    saver.saveAlb();
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                }
-                System.out.println("Save button: info saved in Albomer file");
-            }
-        });
+                    Saver saver = new Saver(name, desc, txtInField);
+                    try {
+                        saver.saveAlb();
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                    }
+                    System.out.println("Save button: info saved in Albomer file");}
+        );
 
         layout.putConstraint(SpringLayout.WEST , nameLabel, 10, SpringLayout.WEST , Pane);
         layout.putConstraint(SpringLayout.NORTH, nameLabel, 25, SpringLayout.NORTH, Pane);
