@@ -169,4 +169,54 @@ public class Editor extends JFrame implements HyperlinkListener {
     public void hyperlinkUpdate(HyperlinkEvent e) {
         // TODO Auto-generated method stub
     }
+
+    public JTextField getNameField() {
+        return nameField;
+    }
+
+    public void setNameField(JTextField nameField) {
+        this.nameField = nameField;
+    }
+
+    public JTextField getDescField() {
+        return descField;
+    }
+
+    public void setDescField(JTextField descField) {
+        this.descField = descField;
+    }
+
+    public JEditorPane getEditorField() {
+        return editorField;
+    }
+
+    public void setEditorField(JEditorPane editorField) {
+        this.editorField = editorField;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDesc() {
+        return desc;
+    }
+
+    public void setDesc(String desc) {
+        this.desc = desc;
+    }
+
+    public String getTxtInField() {
+        return txtInField;
+    }
+
+    public void setTxtInField(String txtInField) {
+        this.txtInField = txtInField;
+    }
 }
