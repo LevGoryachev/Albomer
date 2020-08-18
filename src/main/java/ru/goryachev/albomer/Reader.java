@@ -7,16 +7,14 @@ import java.util.HashMap;
 
 public class Reader {
 
-
     public HashMap readAlb () throws IOException, ClassNotFoundException {
 
-        FileInputStream fileIn = new FileInputStream("SomeName.albomer");
-        ObjectInputStream objIn = new ObjectInputStream(fileIn);
-        HashMap reMap = (HashMap) objIn.readObject();
-        objIn.close();
-
-        return reMap;
-
+        try(FileInputStream fileIn = new FileInputStream("SomeName.albomer"))
+        {
+            try(ObjectInputStream objIn = new ObjectInputStream(fileIn)){
+                HashMap reMap = (HashMap) objIn.readObject();
+                return reMap;
+            }
+        }
     }
-
 }

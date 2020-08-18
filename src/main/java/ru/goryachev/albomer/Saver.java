@@ -11,13 +11,10 @@ public class Saver {
     private String desc;
     private String txtInField;
 
-
     public Saver(String name, String desc, String txtInField) {
-
         this.name = name;
         this.desc = desc;
         this.txtInField = txtInField;
-
     }
 
     public void saveAlb () throws IOException {
@@ -27,10 +24,12 @@ public class Saver {
         hMap.put(2, desc);
         hMap.put(3, txtInField);
 
-        FileOutputStream fileOut = new FileOutputStream("SomeName.albomer");
-        ObjectOutputStream objOut = new ObjectOutputStream(fileOut);
-        objOut.writeObject(hMap);
-        objOut.close();
+        try(FileOutputStream fileOut = new FileOutputStream("SomeName.albomer"))
+        {
+            try(ObjectOutputStream objOut = new ObjectOutputStream(fileOut);)
+            {
+                objOut.writeObject(hMap);
+            }
+        }
     }
-
 }
