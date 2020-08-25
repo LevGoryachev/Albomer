@@ -1,12 +1,12 @@
 package ru.goryachev.albomer;
 
 import java.awt.Container;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.SpringLayout;
+import javax.swing.*;
 
 public class Starter extends JFrame {
 
@@ -46,8 +46,18 @@ public class Starter extends JFrame {
         this.openButton = new JButton("Открыть альбом");
         Pane.add(openButton);
         openButton.addActionListener((actionEvent) -> {Reader reader = new Reader();
+            JFileChooser fileopen = new JFileChooser();
+            int ret = fileopen.showDialog(null, "Открыть файл");
+            if (ret == JFileChooser.APPROVE_OPTION) {
+
+                File file = fileopen.getSelectedFile();
+
+                if (fileopen.getName(file).endsWith(".albomer") && !fileopen.getName(file).isEmpty()) {
+
+                    System.out.println("Opening file: " + fileopen.getName(file));
+
                     try {
-                        reMap = reader.readAlb();
+                        reMap = reader.readAlb(fileopen.getName(file));
                     } catch (ClassNotFoundException e1) {
                         e1.printStackTrace();
                     } catch (IOException e2) {
@@ -60,7 +70,11 @@ public class Starter extends JFrame {
 
                     Editor editor = new Editor(name, desc, txtInField);
                     dispose();
-                    System.out.println("Open button: disposed the Editor filled from file");}
+
+                }
+                System.out.println("The wrong file type!");
+            }
+            System.out.println("Open button: disposed the Editor filled from file");}
         );
 
         layout.putConstraint(SpringLayout.WEST , createButton, 200, SpringLayout.WEST , Pane);

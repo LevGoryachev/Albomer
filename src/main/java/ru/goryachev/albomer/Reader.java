@@ -7,9 +7,9 @@ import java.util.HashMap;
 
 public class Reader {
 
-    public HashMap readAlb () throws IOException, ClassNotFoundException {
+    public HashMap readAlb (String fileName) throws IOException, ClassNotFoundException {
 
-        try(FileInputStream fileIn = new FileInputStream("SomeName.albomer"))
+        try(FileInputStream fileIn = new FileInputStream(fileName/*"SomeName.albomer"*/))
         {
             try(ObjectInputStream objIn = new ObjectInputStream(fileIn)){
                 HashMap reMap = (HashMap) objIn.readObject();
