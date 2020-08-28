@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.HashMap;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileFilter;
 
 public class Starter extends JFrame {
 
@@ -47,6 +48,21 @@ public class Starter extends JFrame {
         Pane.add(openButton);
         openButton.addActionListener((actionEvent) -> {Reader reader = new Reader();
             JFileChooser fileopen = new JFileChooser();
+
+            fileopen.setFileFilter(new FileFilter() {
+                public String getDescription() {
+                    return "Albomer files (*.albomer)";
+                }
+                public boolean accept(File f) {
+                    if (f.isDirectory()) {
+                        return true;
+                    } else {
+                        String filename = f.getName().toLowerCase();
+                        return filename.endsWith(".albomer");
+                    }
+                }
+            });
+
             int ret = fileopen.showDialog(null, "Открыть файл");
             if (ret == JFileChooser.APPROVE_OPTION) {
 
