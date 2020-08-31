@@ -24,7 +24,7 @@ public class Saver {
         hMap.put(2, desc);
         hMap.put(3, txtInField);
 
-        try(FileOutputStream fileOut = new FileOutputStream("SomeName.albomer"))
+        try(FileOutputStream fileOut = new FileOutputStream(name + ".albomer"))
         {
             try(ObjectOutputStream objOut = new ObjectOutputStream(fileOut);)
             {

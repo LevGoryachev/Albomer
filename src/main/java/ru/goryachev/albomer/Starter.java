@@ -2,7 +2,6 @@ package ru.goryachev.albomer;
 
 import java.awt.Container;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 
@@ -41,7 +40,7 @@ public class Starter extends JFrame {
             txtInField = "";
             Editor editor = new Editor(name, desc, txtInField);
             dispose();
-            System.out.println("Create button: disposed the empty Editor");
+            System.out.println("Create button: open the empty Editor");
         });
 
         this.openButton = new JButton("Открыть альбом");
@@ -90,7 +89,7 @@ public class Starter extends JFrame {
                 }
                 System.out.println("The wrong file type!");
             }
-            System.out.println("Open button: disposed the Editor filled from file");}
+            System.out.println("Open button: open the Editor filled from file");}
         );
 
         layout.putConstraint(SpringLayout.WEST , createButton, 200, SpringLayout.WEST , Pane);

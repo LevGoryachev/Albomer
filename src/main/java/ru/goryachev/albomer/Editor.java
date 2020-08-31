@@ -132,6 +132,7 @@ public class Editor extends JFrame implements HyperlinkListener {
                     } catch (IOException e1) {
                         e1.printStackTrace();
                     }
+                    dispose();
                     System.out.println("Save button: info saved in Albomer file");}
         );
 
@@ -161,7 +162,7 @@ public class Editor extends JFrame implements HyperlinkListener {
         setTitle("ALBOMER by Lev Goryachev (version 1.0)");
         setVisible(true);
         setResizable(false);
-
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         System.out.println("Editor");
     }
 
